@@ -1,10 +1,12 @@
 package com.topanlabs.filmtopan.data
 
+import com.topanlabs.filmtopan.R
+
 /**
  * Created by taufan-mft on 4/19/2021.
  */
-class FilmFactory {
-    val name = listOf(
+object FilmFactory {
+    private val name = listOf(
             "A Star is Born",
             "Alita: Battle Angel",
             "Aquaman",
@@ -17,7 +19,7 @@ class FilmFactory {
             "Infinity War"
     )
 
-    val year = listOf(
+    private val year = listOf(
             "2018",
             "2019",
             "2018",
@@ -30,7 +32,7 @@ class FilmFactory {
             "2018",
     )
 
-    val userScore = listOf(
+    private val userScore = listOf(
             75,
             72,
             69,
@@ -44,7 +46,7 @@ class FilmFactory {
 
     )
 
-    val shortDesc = listOf(
+    private val shortDesc = listOf(
             "Seasoned musician Jackson Maine discovers — and falls in love with — struggling artist Ally. She has just about given up on her dream to make it big as a singer — until Jack coaxes her into the spotlight. But even as Ally's career takes off, the personal side of their relationship is breaking down, as Jack fights an ongoing battle with his own internal demons.",
             "When Alita awakens with no memory of who she is in a future world she does not recognize, she is taken in by Ido, a compassionate doctor who realizes that somewhere in this abandoned cyborg shell is the heart and soul of a young woman with an extraordinary past.",
             "Once home to the most advanced civilization on Earth, Atlantis is now an underwater kingdom ruled by the power-hungry King Orm. With a vast army at his disposal, Orm plans to conquer the remaining oceanic people and then the surface world. Standing in his way is Arthur Curry, Orm's half-human, half-Atlantean brother and true heir to the throne.",
@@ -57,11 +59,11 @@ class FilmFactory {
             "As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain."
     )
 
-    val language = "English"
+    private val language = "English"
 
-    val status = "Released"
+    private val status = "Released"
 
-    val budget = listOf(
+    private val budget = listOf(
             "$36,000,000",
             "$170,000,000",
             "$160,000,000",
@@ -74,7 +76,7 @@ class FilmFactory {
             "$300,000,000"
     )
 
-    val income = listOf(
+    private val income = listOf(
             "$433,888,866",
             "$404,852,543",
             "$1,148,461,807",
@@ -87,7 +89,7 @@ class FilmFactory {
             "$2,046,239,637"
     )
 
-    val ageRating = listOf(
+    private val ageRating = listOf(
             "R",
             "PG-13",
             "PG-13",
@@ -100,7 +102,7 @@ class FilmFactory {
             "PG-13"
     )
 
-    val tags = listOf(
+    private val tags = listOf(
             "Drama, Romance, Music",
             "Action, Science Fiction, Adventure",
             "Action, Adventure, Fantasy",
@@ -113,7 +115,7 @@ class FilmFactory {
             "Adventure, Action, Science Fiction"
     )
 
-    val runtime = listOf(
+    private val runtime = listOf(
             "2h 16m",
             "2h 2m",
             "2h 23m",
@@ -125,4 +127,41 @@ class FilmFactory {
             "1h 38m",
             "2h 29m"
     )
+
+    private val pic = listOf(
+            R.drawable.poster_a_start_is_born,
+            R.drawable.poster_alita,
+            R.drawable.poster_aquaman,
+            R.drawable.poster_bohemian,
+            R.drawable.poster_cold_persuit,
+            R.drawable.poster_creed,
+            R.drawable.poster_crimes,
+            R.drawable.poster_glass,
+            R.drawable.poster_how_to_train,
+            R.drawable.poster_infinity_war,
+    )
+
+    val listData: List<FilmModel>
+        get() {
+            val list = mutableListOf<FilmModel>()
+            for (pos in name.indices) {
+                val film = FilmModel(
+                        name = name[pos],
+                        year = year[pos],
+                        userScore = userScore[pos].toString(),
+                        shortDesc = shortDesc[pos],
+                        language = language,
+                        status = status,
+                        budget = budget[pos],
+                        income = income[pos],
+                        ageRating = ageRating[pos],
+                        tags = tags[pos],
+                        runtime = runtime[pos],
+                        picture = pic[pos]
+                )
+                list.add(film)
+            }
+            return list
+        }
+
 }

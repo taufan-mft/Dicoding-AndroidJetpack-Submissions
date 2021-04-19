@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Film Topan</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="movie_tab">Movies</string>
+    <string name="tv_tab">TV</string>
+    <string name="year">2018</string>
+    <string name="def_title">A Star is Born</string>
+    <string name="def_tags">Drama, Romantic</string>
 </resources>

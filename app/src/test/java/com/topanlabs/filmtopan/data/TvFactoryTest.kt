@@ -3,12 +3,12 @@ package com.topanlabs.filmtopan.data
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class FilmFactoryTest {
+class TvFactoryTest {
 
     @Test
     fun getListData() {
-        val data = FilmFactory.listData
-        assertEquals("A Star is Born", data[0].name)
+        val data = TvFactory.listData
+        assertEquals("Arrow", data[0].name)
         assertEquals(10, data.count())
     }
 }

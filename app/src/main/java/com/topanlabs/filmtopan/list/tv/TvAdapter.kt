@@ -1,10 +1,12 @@
 package com.topanlabs.filmtopan.list.tv
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.topanlabs.filmtopan.data.TvModel
 import com.topanlabs.filmtopan.databinding.ItemRowFilm2Binding
+import com.topanlabs.filmtopan.detail.DetailActivity
 
 /**
  * Created by taufan-mft on 4/19/2021.
@@ -24,7 +26,10 @@ class TvAdapter : RecyclerView.Adapter<TvAdapter.TvViewHolder>() {
                 tvYear.text = tv.year
                 imgView.setImageResource(tv.picture)
                 itemView.setOnClickListener {
-
+                    val intent = Intent(itemView.context, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.TYPE_TAG, DetailActivity.ID_TV)
+                    intent.putExtra(DetailActivity.ID_TAG, tv.name)
+                    itemView.context.startActivity(intent)
                 }
             }
         }

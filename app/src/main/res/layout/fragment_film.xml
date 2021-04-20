@@ -13,5 +13,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_row_film" />
+        tools:listitem="@layout/item_row_film2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

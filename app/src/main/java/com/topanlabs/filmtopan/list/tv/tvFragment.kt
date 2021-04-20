@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.topanlabs.filmtopan.databinding.FragmentTvBinding
 import com.topanlabs.filmtopan.list.ListViewModel
 
@@ -30,7 +30,7 @@ class tvFragment : Fragment() {
             val adapter = TvAdapter()
             adapter.setData(tvs)
             with(fragmentTvBinding.recView) {
-                layoutManager = LinearLayoutManager(context)
+                layoutManager = GridLayoutManager(context, 2)
                 setHasFixedSize(true)
                 this.adapter = adapter
             }

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.topanlabs.filmtopan.data.TvModel
-import com.topanlabs.filmtopan.databinding.ItemRowFilmBinding
+import com.topanlabs.filmtopan.databinding.ItemRowFilm2Binding
 
 /**
  * Created by taufan-mft on 4/19/2021.
@@ -18,13 +18,11 @@ class TvAdapter : RecyclerView.Adapter<TvAdapter.TvViewHolder>() {
         notifyDataSetChanged()
     }
 
-    class TvViewHolder(private val binding: ItemRowFilmBinding) : RecyclerView.ViewHolder(binding.root) {
+    class TvViewHolder(private val binding: ItemRowFilm2Binding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(tv: TvModel) {
             with(binding) {
-                tvTitle.text = tv.name
                 tvYear.text = tv.year
-                tvTag.text = tv.tags
-                imageView.setImageResource(tv.picture)
+                imgView.setImageResource(tv.picture)
                 itemView.setOnClickListener {
 
                 }
@@ -34,7 +32,7 @@ class TvAdapter : RecyclerView.Adapter<TvAdapter.TvViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvViewHolder {
-        val binding = ItemRowFilmBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemRowFilm2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TvViewHolder(binding)
     }
 

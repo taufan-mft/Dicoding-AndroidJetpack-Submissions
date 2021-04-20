@@ -1,8 +1,11 @@
 package com.topanlabs.filmtopan.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 /**
  * Created by taufan-mft on 4/19/2021.
  */
+@Parcelize
 data class FilmModel(
         val name: String,
         val year: String,
@@ -16,4 +19,4 @@ data class FilmModel(
         val tags: String,
         val runtime: String,
         val picture: Int
-)
+) : Parcelable

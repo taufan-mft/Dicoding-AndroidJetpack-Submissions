@@ -11,8 +11,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     companion object {
-        const val IN_USERNAME = "username"
-
         @StringRes
         private val TAB_TITLES = intArrayOf(
                 R.string.movie_tab,

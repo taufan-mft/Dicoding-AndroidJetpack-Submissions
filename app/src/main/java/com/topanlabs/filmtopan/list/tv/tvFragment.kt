@@ -12,7 +12,7 @@ import com.topanlabs.filmtopan.list.ListViewModel
 
 
 class tvFragment : Fragment() {
-    lateinit var fragmentTvBinding: FragmentTvBinding
+    private lateinit var fragmentTvBinding: FragmentTvBinding
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

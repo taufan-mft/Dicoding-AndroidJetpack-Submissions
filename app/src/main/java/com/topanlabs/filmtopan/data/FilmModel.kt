@@ -13,8 +13,6 @@ data class FilmModel(
         val shortDesc: String,
         val language: String,
         val status: String,
-        val budget: String,
-        val income: String,
         val ageRating: String,
         val tags: String,
         val runtime: String,

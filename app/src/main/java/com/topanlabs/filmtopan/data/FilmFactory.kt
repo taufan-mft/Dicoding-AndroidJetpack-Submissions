@@ -59,35 +59,9 @@ object FilmFactory {
             "As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain."
     )
 
-    private val language = "English"
+    private const val language = "English"
 
-    private val status = "Released"
-
-    private val budget = listOf(
-            "$36,000,000",
-            "$170,000,000",
-            "$160,000,000",
-            "$52,000,000",
-            "$60,000,000",
-            "$37,000,000",
-            "$200,000,000",
-            "$20,000,000",
-            "$165,000,000",
-            "$300,000,000"
-    )
-
-    private val income = listOf(
-            "$433,888,866",
-            "$404,852,543",
-            "$1,148,461,807",
-            "$894,027,543",
-            "$76,419,755",
-            "$173,567,581",
-            "$653,355,901",
-            "$246,941,965",
-            "$494,878,759",
-            "$2,046,239,637"
-    )
+    private const val status = "Released"
 
     private val ageRating = listOf(
             "R",
@@ -152,8 +126,6 @@ object FilmFactory {
                         shortDesc = shortDesc[pos],
                         language = language,
                         status = status,
-                        budget = budget[pos],
-                        income = income[pos],
                         ageRating = ageRating[pos],
                         tags = tags[pos],
                         runtime = runtime[pos],

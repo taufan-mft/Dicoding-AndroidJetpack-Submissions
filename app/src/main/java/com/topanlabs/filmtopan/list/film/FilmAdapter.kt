@@ -4,7 +4,8 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.topanlabs.filmtopan.data.FilmModel
+import com.bumptech.glide.Glide
+import com.topanlabs.filmtopan.data.Result
 import com.topanlabs.filmtopan.databinding.ItemRowFilm2Binding
 import com.topanlabs.filmtopan.detail.DetailActivity
 
@@ -12,23 +13,25 @@ import com.topanlabs.filmtopan.detail.DetailActivity
  * Created by taufan-mft on 4/19/2021.
  */
 class FilmAdapter : RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
-    private val listFilms = ArrayList<FilmModel>()
+    private val listFilms = ArrayList<Result>()
 
-    fun setData(listFilms: List<FilmModel>) {
+    fun setData(listFilms: List<Result>) {
         this.listFilms.clear()
         this.listFilms.addAll(listFilms)
         notifyDataSetChanged()
     }
 
     class FilmViewHolder(private val binding: ItemRowFilm2Binding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(film: FilmModel) {
+        fun bind(film: Result) {
             with(binding) {
-                tvYear.text = film.year
-                imgView.setImageResource(film.picture)
+                tvYear.text = film.releaseDate.subSequence(0, 4)
+                Glide.with(imgView.context)
+                    .load("https://image.tmdb.org/t/p/original/${film.posterPath}")
+                    .into(imgView)
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java)
                     intent.putExtra(DetailActivity.TYPE_TAG, DetailActivity.ID_FILM)
-                    intent.putExtra(DetailActivity.ID_TAG, film.name)
+                    intent.putExtra(DetailActivity.ID_TAG, film.originalTitle)
                     itemView.context.startActivity(intent)
                 }
             }

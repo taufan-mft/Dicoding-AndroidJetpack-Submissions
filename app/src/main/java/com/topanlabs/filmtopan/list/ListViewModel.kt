@@ -1,17 +1,26 @@
 package com.topanlabs.filmtopan.list
 
 import androidx.lifecycle.ViewModel
-import com.topanlabs.filmtopan.data.FilmFactory
-import com.topanlabs.filmtopan.data.FilmModel
+import androidx.lifecycle.liveData
+import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.TvFactory
 import com.topanlabs.filmtopan.data.TvModel
+import com.topanlabs.filmtopan.utils.Resource
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Created by taufan-mft on 4/19/2021.
  */
-class ListViewModel : ViewModel() {
+class ListViewModel(val repository: DataRepository) : ViewModel() {
 
-    fun getFilm(): List<FilmModel> = FilmFactory.listData
+    fun getFilm() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = repository.getFilms()))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 
     fun getTv(): List<TvModel> = TvFactory.listData
 }

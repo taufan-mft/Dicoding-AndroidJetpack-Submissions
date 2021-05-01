@@ -1,6 +1,7 @@
 package com.topanlabs.filmtopan.network
 
 import com.topanlabs.filmtopan.data.TmHead
+import com.topanlabs.filmtopan.data.TmTvHead
 import retrofit2.http.GET
 
 /**
@@ -11,6 +12,6 @@ interface TmApi {
     suspend fun getMovies(): TmHead
 
     @GET("trending/tv/day?api_key=7f85d423ec1dba1aab33327dfb3fd290")
-    suspend fun getTvs(): TmHead
+    suspend fun getTvs(): TmTvHead
 
 }

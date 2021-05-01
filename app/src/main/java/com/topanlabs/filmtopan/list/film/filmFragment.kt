@@ -50,7 +50,7 @@ class filmFragment : Fragment() {
                 when (resource.status) {
                     Status.SUCCESS -> {
                         // recyclerView.visibility = View.VISIBLE
-                        // progressBar.visibility = View.GONE
+                        fragmentFilmBinding.progressBar.visibility = View.GONE
                         resource.data?.let { results -> updateData(results.results) }
                     }
                     Status.ERROR -> {

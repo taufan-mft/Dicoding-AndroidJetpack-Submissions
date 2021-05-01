@@ -10,4 +10,7 @@ interface TmApi {
     @GET("trending/movie/day?api_key=7f85d423ec1dba1aab33327dfb3fd290")
     suspend fun getMovies(): TmHead
 
+    @GET("trending/tv/day?api_key=7f85d423ec1dba1aab33327dfb3fd290")
+    suspend fun getTvs(): TmHead
+
 }

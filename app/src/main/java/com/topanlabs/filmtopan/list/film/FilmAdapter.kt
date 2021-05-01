@@ -25,7 +25,8 @@ class FilmAdapter : RecyclerView.Adapter<FilmAdapter.FilmViewHolder>() {
         fun bind(film: Result) {
             with(binding) {
                 tvYear.text = film.releaseDate.subSequence(0, 4)
-                Glide.with(imgView.context)
+                Glide
+                    .with(imgView.context)
                     .load("https://image.tmdb.org/t/p/original/${film.posterPath}")
                     .into(imgView)
                 itemView.setOnClickListener {

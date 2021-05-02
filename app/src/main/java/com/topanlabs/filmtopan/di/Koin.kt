@@ -1,6 +1,7 @@
 package com.topanlabs.filmtopan.di
 
 import com.topanlabs.filmtopan.data.DataRepository
+import com.topanlabs.filmtopan.detail.DetailViewModel
 import com.topanlabs.filmtopan.list.ListViewModel
 import com.topanlabs.filmtopan.network.RetroBuilder
 import org.koin.android.viewmodel.dsl.viewModel
@@ -12,5 +13,6 @@ object Koin {
         single<DataRepository> { DataRepository(get()) }
         single { RetroBuilder.tmApi }
         viewModel { ListViewModel(get()) }
+        viewModel { DetailViewModel(get()) }
     }
 }

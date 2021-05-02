@@ -1,15 +1,13 @@
 package com.topanlabs.filmtopan.detail
 
 import androidx.lifecycle.ViewModel
-import com.topanlabs.filmtopan.data.FilmFactory
-import com.topanlabs.filmtopan.data.FilmModel
-import com.topanlabs.filmtopan.data.TvFactory
-import com.topanlabs.filmtopan.data.TvModel
+import com.topanlabs.filmtopan.data.*
+import com.topanlabs.filmtopan.utils.Resource
 
 /**
  * Created by taufan-mft on 4/19/2021.
  */
-class DetailViewModel : ViewModel() {
+class DetailViewModel(val repository: DataRepository) : ViewModel() {
 
     fun getFilm(name: String): FilmModel {
         val films = FilmFactory.listData
@@ -33,5 +31,25 @@ class DetailViewModel : ViewModel() {
             }
         }
         return selectedTv
+    }
+
+    suspend fun getFilmDetail(movieID: Int): Resource<Any> {
+        lateinit var resource: Resource<Any>
+        try {
+            resource = Resource.success(data = repository.getFilmDetail(movieID))
+        } catch (exception: Exception) {
+            resource = Resource.error(data = null, message = exception.message ?: "Error Occurred!")
+        }
+        return resource
+    }
+
+    suspend fun getTvDetail(tvID: Int): Resource<Any> {
+        lateinit var resource: Resource<Any>
+        try {
+            resource = Resource.success(data = repository.getTvDetail(tvID))
+        } catch (exception: Exception) {
+            resource = Resource.error(data = null, message = exception.message ?: "Error Occurred!")
+        }
+        return resource
     }
 }

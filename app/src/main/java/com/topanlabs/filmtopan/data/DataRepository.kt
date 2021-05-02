@@ -7,4 +7,7 @@ import com.topanlabs.filmtopan.network.TmApi
  */
 class DataRepository(val tmApi: TmApi) {
     suspend fun getFilms() = tmApi.getMovies()
+    suspend fun getTvs() = tmApi.getTvs()
+    suspend fun getFilmDetail(movieID: Int) = tmApi.getFilmDetail(movieID)
+    suspend fun getTvDetail(tvID: Int) = tmApi.getTvDetail(tvID)
 }

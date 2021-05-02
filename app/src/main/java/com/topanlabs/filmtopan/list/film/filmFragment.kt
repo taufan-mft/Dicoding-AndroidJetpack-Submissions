@@ -1,7 +1,6 @@
 package com.topanlabs.filmtopan.list.film
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,6 @@ class filmFragment : Fragment() {
                 layoutManager = GridLayoutManager(context, 2)
                 setHasFixedSize(false)
                 this.adapter = adapter
-                Log.d("farin", "disinimas")
             }
         }
         setObservers()
@@ -68,7 +66,7 @@ class filmFragment : Fragment() {
     }
 
     private fun updateData(results: List<Result>) {
-        fragmentFilmBinding.recView.adapter = adapter
+      fragmentFilmBinding.recView.adapter = adapter
         adapter.setData(results)
     }
 }

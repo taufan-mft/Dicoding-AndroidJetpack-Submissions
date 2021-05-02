@@ -4,16 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import com.topanlabs.filmtopan.data.ResultX
 import com.topanlabs.filmtopan.databinding.FragmentTvBinding
 import com.topanlabs.filmtopan.list.ListViewModel
+import com.topanlabs.filmtopan.utils.Status
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 
 class tvFragment : Fragment() {
     private lateinit var fragmentTvBinding: FragmentTvBinding
     val viewModel: ListViewModel by sharedViewModel()
+    val adapter = TvAdapter()
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -25,15 +30,41 @@ class tvFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null) {
-            val tvs = viewModel.getTv()
-            val adapter = TvAdapter()
-            adapter.setData(tvs)
             with(fragmentTvBinding.recView) {
                 layoutManager = GridLayoutManager(context, 2)
                 setHasFixedSize(true)
                 this.adapter = adapter
             }
         }
+        setObservers()
+    }
+
+    private fun setObservers() {
+        viewModel.getTv().observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        // recyclerView.visibility = View.VISIBLE
+                        fragmentTvBinding.progressBar.visibility = View.GONE
+                        resource.data?.let { results -> updateData(results.results) }
+                    }
+                    Status.ERROR -> {
+                        // recyclerView.visibility = View.VISIBLE
+                        // progressBar.visibility = View.GONE
+                        Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                    }
+                    Status.LOADING -> {
+                        //  progressBar.visibility = View.VISIBLE
+                        // recyclerView.visibility = View.GONE
+                    }
+                }
+            }
+        })
+    }
+
+    private fun updateData(results: List<ResultX>) {
+        fragmentTvBinding.recView.adapter = adapter
+        adapter.setData(results)
     }
 
 }

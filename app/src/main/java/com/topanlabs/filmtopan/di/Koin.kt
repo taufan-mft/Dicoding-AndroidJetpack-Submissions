@@ -4,7 +4,7 @@ import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.detail.DetailViewModel
 import com.topanlabs.filmtopan.list.ListViewModel
 import com.topanlabs.filmtopan.network.RetroBuilder
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 object Koin {

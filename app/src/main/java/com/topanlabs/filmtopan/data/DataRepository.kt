@@ -10,4 +10,6 @@ class DataRepository(val tmApi: TmApi) {
     suspend fun getTvs() = tmApi.getTvs()
     suspend fun getFilmDetail(movieID: Int) = tmApi.getFilmDetail(movieID)
     suspend fun getTvDetail(tvID: Int) = tmApi.getTvDetail(tvID)
+    suspend fun getFilmRating(movieID: Int) = tmApi.getFilmRating(movieID)
+    suspend fun getTvRating(tvID: Int) = tmApi.getTvRating(tvID)
 }

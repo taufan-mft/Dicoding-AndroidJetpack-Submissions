@@ -2,16 +2,18 @@ package com.topanlabs.filmtopan.detail
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.topanlabs.filmtopan.data.FilmDetailData
 import com.topanlabs.filmtopan.data.TvDetailData
 import com.topanlabs.filmtopan.databinding.ActivityDetailBinding
 import com.topanlabs.filmtopan.utils.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailActivity : AppCompatActivity() {
     companion object {
@@ -34,27 +36,63 @@ class DetailActivity : AppCompatActivity() {
         val type = intent.getStringExtra(TYPE_TAG)
         if (type == ID_FILM) {
             supportActionBar?.title = "Detail Film"
-            val name = intent.getStringExtra(ID_TAG)
-            viewModel.getFilm(name!!).apply {
-                binding.imageView2.setImageResource(picture)
-                binding.tvTitle.text = this.name
-                binding.tvTags.text = tags
-                binding.tvYear.text = "$year - $runtime"
-                binding.tvLang.text = language
-                binding.tvAge.text = ageRating
-                binding.tvStatus.text = status
-                binding.tvScore.text = "${userScore}%"
-                binding.tvOverview.text = shortDesc
-
+            intent.getIntExtra(ID_TAG, 0).let {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    changeVisibility(View.GONE)
+                    val film = viewModel.getFilmDetail(it)
+                    val rating = viewModel.getFilmRating(it)
+                    when (film.status) {
+                        Status.SUCCESS -> {
+                            val data = film.data as FilmDetailData
+                            binding.tvTitle.text = data.originalTitle
+                            Glide.with(applicationContext)
+                                .load("https://image.tmdb.org/t/p/original/${data.posterPath}")
+                                .into(binding.imageView2)
+                            val builder = StringBuilder()
+                            val iterator = data.genres.iterator()
+                            while (iterator.hasNext()) {
+                                val obj = iterator.next()
+                                if (iterator.hasNext()) {
+                                    builder.append(obj.name)
+                                    builder.append(", ")
+                                } else {
+                                    builder.append(obj.name)
+                                }
+                            }
+                            binding.tvAge.text = rating
+                            binding.tvTags.text = builder
+                            data.originalLanguage.let {
+                                when (it) {
+                                    "en" -> binding.tvLang.text = "English"
+                                    "es" -> binding.tvLang.text = "Espanol"
+                                    "tr" -> binding.tvLang.text = "Turkish"
+                                    "ja" -> binding.tvLang.text = "Japanese"
+                                    "pl" -> binding.tvLang.text = "Polish"
+                                    else -> binding.tvLang.text = it
+                                }
+                            }
+                            binding.tvStatus.text = data.status
+                            binding.tvOverview.text = data.overview
+                            binding.tvScore.text =
+                                (data.voteAverage * 10).toString().substring(0, 2) + "%"
+                            binding.tvYear.text = data.releaseDate.substring(0, 4)
+                            binding.progressBar.visibility = View.GONE
+                            changeVisibility(View.VISIBLE)
+                        }
+                    }
+                }
             }
         } else {
             supportActionBar?.title = "Detail TV Show"
             intent.getIntExtra(ID_TAG, 0).let {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    val film = viewModel.getTvDetail(it)
-                    when (film.status) {
+                    changeVisibility(View.GONE)
+                    val tv = viewModel.getTvDetail(it)
+                    val rating = viewModel.getTvRating(it)
+                    binding.tvAge.text = rating
+                    when (tv.status) {
                         Status.SUCCESS -> {
-                            val data = film.data as TvDetailData
+                            val data = tv.data as TvDetailData
                             binding.tvTitle.text = data.originalName
                             Glide
                                 .with(applicationContext)
@@ -86,17 +124,14 @@ class DetailActivity : AppCompatActivity() {
                             binding.tvOverview.text = data.overview
                             binding.tvScore.text =
                                 (data.voteAverage * 10).toString().substring(0, 2) + "%"
-
+                            binding.tvYear.text = data.firstAirDate.substring(0, 4)
+                            binding.progressBar.visibility = View.GONE
+                            changeVisibility(View.VISIBLE)
                         }
                         Status.ERROR -> {
-                            // recyclerView.visibility = View.VISIBLE
-                            // progressBar.visibility = View.GONE
-                            Toast.makeText(applicationContext, film.message, Toast.LENGTH_LONG)
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(applicationContext, tv.message, Toast.LENGTH_LONG)
                                 .show()
-                        }
-                        Status.LOADING -> {
-                            //  progressBar.visibility = View.VISIBLE
-                            // recyclerView.visibility = View.GONE
                         }
                     }
                 }
@@ -107,5 +142,21 @@ class DetailActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    private fun changeVisibility(visible: Int) {
+        binding.tvYear.visibility = visible
+        binding.tvTitle.visibility = visible
+        binding.imageView2.visibility = visible
+        binding.tvTags.visibility = visible
+        binding.tvScore.visibility = visible
+        binding.tvAge.visibility = visible
+        binding.tvLang.visibility = visible
+        binding.tvOverview.visibility = visible
+        binding.tvStatus.visibility = visible
+        binding.stat.visibility = visible
+        binding.oView.visibility = visible
+        binding.lang.visibility = visible
+        binding.score.visibility = visible
     }
 }

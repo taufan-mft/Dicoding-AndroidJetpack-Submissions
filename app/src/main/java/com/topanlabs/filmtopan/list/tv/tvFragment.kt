@@ -12,7 +12,7 @@ import com.topanlabs.filmtopan.data.ResultX
 import com.topanlabs.filmtopan.databinding.FragmentTvBinding
 import com.topanlabs.filmtopan.list.ListViewModel
 import com.topanlabs.filmtopan.utils.Status
-import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class tvFragment : Fragment() {
@@ -40,7 +40,7 @@ class tvFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewModel.getTv().observe(this, Observer {
+        viewModel.getTv().observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {

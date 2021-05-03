@@ -7,6 +7,7 @@ import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.TmHead
 import com.topanlabs.filmtopan.data.TmTvHead
 import com.topanlabs.filmtopan.di.Koin
+import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import com.topanlabs.filmtopan.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -23,11 +24,11 @@ import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class ListViewModelTest : KoinTest {
-    val listViewModel by inject<ListViewModel>()
     val repoReal by inject<DataRepository>()
     val dispatcher = TestCoroutineDispatcher()
 
@@ -46,9 +47,16 @@ class ListViewModelTest : KoinTest {
     @Mock
     private lateinit var observer2: Observer<Resource<Any>>
 
+    private lateinit var listViewModel: ListViewModel
+
+    @Mock
+    private lateinit var espresso: EspressoIdlingResource
+
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        MockitoAnnotations.initMocks(this)
+        listViewModel = ListViewModel(repoReal, espresso)
     }
 
     @After
@@ -58,24 +66,23 @@ class ListViewModelTest : KoinTest {
 
     @Test
     fun getFilm() {
-        runBlocking {
+
             listViewModel.getFilm().observeForever(observer)
-            val films: TmHead = repoReal.getFilms()
-            val resources = Resource.success(data = films)
-            assertNotNull(films)
+        val films: TmHead = runBlocking { repoReal.getFilms() }
+        val resources = Resource.success(data = films)
             verify(observer).onChanged(resources)
-        }
+
+
     }
 
     @Test
     fun getTv() {
-        runBlocking {
             listViewModel.getTv().observeForever(observer2)
-            val tvs: TmTvHead = repoReal.getTvs()
+        val tvs: TmTvHead = runBlocking { repoReal.getTvs() }
             assertNotNull(tvs)
             val resources = Resource.success(data = tvs)
 
             verify(observer2).onChanged(resources)
-        }
+
     }
 }

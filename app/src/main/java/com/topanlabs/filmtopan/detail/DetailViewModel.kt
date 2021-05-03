@@ -1,34 +1,41 @@
 package com.topanlabs.filmtopan.detail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.RatingData
 import com.topanlabs.filmtopan.data.RatingFilmData
+import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import com.topanlabs.filmtopan.utils.Resource
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Created by taufan-mft on 4/19/2021.
  */
-class DetailViewModel(val repository: DataRepository) : ViewModel() {
+class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdlingResource) : ViewModel() {
 
-    suspend fun getFilmDetail(movieID: Int): Resource<Any> {
-        lateinit var resource: Resource<Any>
+    fun getFilmDetail(movieID: Int) = liveData(Dispatchers.IO) {
+        espresso.increment()
+
         try {
-            resource = Resource.success(data = repository.getFilmDetail(movieID))
+            emit(Resource.success(data = repository.getFilmDetail(movieID)))
         } catch (exception: Exception) {
-            resource = Resource.error(data = null, message = exception.message ?: "Error Occurred!")
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
-        return resource
+        espresso.decrement()
+
     }
 
-    suspend fun getTvDetail(tvID: Int): Resource<Any> {
-        lateinit var resource: Resource<Any>
+    fun getTvDetail(tvID: Int) = liveData(Dispatchers.IO) {
+        espresso.increment()
         try {
-            resource = Resource.success(data = repository.getTvDetail(tvID))
+            emit(Resource.success(data = repository.getTvDetail(tvID)))
         } catch (exception: Exception) {
-            resource = Resource.error(data = null, message = exception.message ?: "Error Occurred!")
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
-        return resource
+
+        espresso.decrement()
+
     }
 
     suspend fun getFilmRating(movieID: Int): String {
@@ -37,7 +44,7 @@ class DetailViewModel(val repository: DataRepository) : ViewModel() {
         try {
             response = repository.getFilmRating(movieID)
             for (resp in response.results) {
-                if (resp.iso31661.equals("US")) {
+                if (resp.iso31661 == "US") {
                     rating = resp.releaseDates[0].certification
                 }
             }

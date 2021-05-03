@@ -25,7 +25,7 @@ class DataRepositoryTest : KoinTest {
             val films = repository.getFilms()
             assertNotNull(films)
             val data = films.results[0].originalTitle
-            System.out.println(data)
+            println(data)
         }
     }
 
@@ -35,7 +35,7 @@ class DataRepositoryTest : KoinTest {
             val tvs = repository.getTvs()
             assertNotNull(tvs)
             val data = tvs.results[0].originalName
-            System.out.println(data)
+            println(data)
         }
     }
 

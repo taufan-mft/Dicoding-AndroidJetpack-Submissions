@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by taufan-mft on 5/3/2021.
  */
+
 object LiveDataTestUtil {
     fun <T> getValue(liveData: LiveData<T>): T {
         val data = arrayOfNulls<Any>(1)
@@ -24,11 +25,11 @@ object LiveDataTestUtil {
         liveData.observeForever(observer)
 
         try {
-            latch.await(8, TimeUnit.SECONDS)
+            latch.await(40, TimeUnit.SECONDS)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-
+        @Suppress("UNCHECKED_CAST")
         return data[0] as T
 
     }

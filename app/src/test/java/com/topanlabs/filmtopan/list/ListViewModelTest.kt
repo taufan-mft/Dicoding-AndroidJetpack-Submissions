@@ -8,8 +8,10 @@ import com.topanlabs.filmtopan.data.TmHead
 import com.topanlabs.filmtopan.data.TmTvHead
 import com.topanlabs.filmtopan.di.Koin
 import com.topanlabs.filmtopan.utils.EspressoIdlingResource
+import com.topanlabs.filmtopan.utils.LiveDataTestUtil
 import com.topanlabs.filmtopan.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -26,7 +28,9 @@ import org.koin.test.inject
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import kotlin.test.assertEquals
 
+@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class ListViewModelTest : KoinTest {
     val repoReal by inject<DataRepository>()
@@ -67,22 +71,34 @@ class ListViewModelTest : KoinTest {
     @Test
     fun getFilm() {
 
-            listViewModel.getFilm().observeForever(observer)
+
         val films: TmHead = runBlocking { repoReal.getFilms() }
         val resources = Resource.success(data = films)
-            verify(observer).onChanged(resources)
+        listViewModel.getFilmku()
+        val value = LiveDataTestUtil.getValue(listViewModel.films)
+        assertNotNull(value)
+        val data = value.data as TmHead
+        println(value)
+        listViewModel.films.observeForever(observer)
+        verify(observer).onChanged(resources)
+        assertEquals(data.totalResults, films.totalResults)
 
 
     }
 
     @Test
     fun getTv() {
-            listViewModel.getTv().observeForever(observer2)
         val tvs: TmTvHead = runBlocking { repoReal.getTvs() }
-            assertNotNull(tvs)
-            val resources = Resource.success(data = tvs)
+        assertNotNull(tvs)
 
-            verify(observer2).onChanged(resources)
+        val resources = Resource.success(data = tvs)
+        listViewModel.getTvku()
+        val value = LiveDataTestUtil.getValue(listViewModel.tvs)
+        assertNotNull(value)
+        val data = value.data as TmTvHead
+        listViewModel.tvs.observeForever(observer2)
+        verify(observer2).onChanged(resources)
+        assertEquals(data.totalResults, tvs.totalResults)
 
     }
 }

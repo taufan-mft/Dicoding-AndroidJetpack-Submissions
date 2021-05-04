@@ -65,14 +65,14 @@ class MainActivityTest : KoinTest {
     @Test
     fun loadDetailFilm() {
         onView(withId(R.id.recView)).perform(
-                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
-                        0,
-                        click()
-                )
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
         )
         onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
-        //  onView(withId(R.id.tvTitle)).check(matches(withText(films[0].name)))
-        // onView(withId(R.id.tvOverview)).check(matches(withText(films[0].shortDesc)))
+        onView(withId(R.id.tvTitle)).check(matches(withText(films.results[0].originalTitle)))
+        onView(withId(R.id.tvOverview)).check(matches(withText(films.results[0].overview)))
     }
 /*
     @Test

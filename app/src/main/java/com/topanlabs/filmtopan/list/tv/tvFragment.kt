@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.topanlabs.filmtopan.data.ResultX
+import com.topanlabs.filmtopan.data.TmTvHead
 import com.topanlabs.filmtopan.databinding.FragmentTvBinding
 import com.topanlabs.filmtopan.list.ListViewModel
 import com.topanlabs.filmtopan.utils.Status
@@ -20,9 +21,9 @@ class tvFragment : Fragment() {
     val viewModel: ListViewModel by sharedViewModel()
     val adapter = TvAdapter()
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         fragmentTvBinding = FragmentTvBinding.inflate(inflater, container, false)
         return fragmentTvBinding.root
     }
@@ -40,13 +41,17 @@ class tvFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewModel.getTv().observe(viewLifecycleOwner, Observer {
+        viewModel.getTvku()
+        viewModel.tvs.observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         // recyclerView.visibility = View.VISIBLE
                         fragmentTvBinding.progressBar.visibility = View.GONE
-                        resource.data?.let { results -> updateData(results.results) }
+                        resource.data?.let { results ->
+                            results as TmTvHead
+                            updateData(results.results)
+                        }
                     }
                     Status.ERROR -> {
                         // recyclerView.visibility = View.VISIBLE

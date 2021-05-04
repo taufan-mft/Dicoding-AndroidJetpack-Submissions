@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.topanlabs.filmtopan.data.Result
+import com.topanlabs.filmtopan.data.TmHead
 import com.topanlabs.filmtopan.databinding.FragmentFilmBinding
 import com.topanlabs.filmtopan.list.ListViewModel
 import com.topanlabs.filmtopan.utils.Status
@@ -43,13 +44,17 @@ class filmFragment : Fragment() {
     }
 
     private fun setObservers() {
-        viewModel.getFilm().observe(viewLifecycleOwner, Observer {
+        viewModel.getFilmku()
+        viewModel.films.observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         // recyclerView.visibility = View.VISIBLE
                         fragmentFilmBinding.progressBar.visibility = View.GONE
-                        resource.data?.let { results -> updateData(results.results) }
+                        resource.data?.let { results ->
+                            results as TmHead
+                            updateData(results.results)
+                        }
                     }
                     Status.ERROR -> {
                         // recyclerView.visibility = View.VISIBLE

@@ -4,11 +4,14 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.verify
 import com.topanlabs.filmtopan.data.DataRepository
+import com.topanlabs.filmtopan.data.FilmDetailData
+import com.topanlabs.filmtopan.data.TvDetailData
 import com.topanlabs.filmtopan.di.Koin
 import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import com.topanlabs.filmtopan.utils.LiveDataTestUtil
 import com.topanlabs.filmtopan.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -26,7 +29,9 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(MockitoJUnitRunner::class)
+@ExperimentalCoroutinesApi
 class DetailViewModelTest : KoinTest {
+
     private val dispatcher = TestCoroutineDispatcher()
     private val realRepo by inject<DataRepository>()
     private lateinit var detailViewModel: DetailViewModel
@@ -62,30 +67,36 @@ class DetailViewModelTest : KoinTest {
 
     @Test
 
-    fun getAFilmDetail() {
+    fun getFilmDetail() {
         val movieId = 567189
-        detailViewModel.getFilmDetail(movieId).observeForever(observer)
+
         val films = runBlocking { realRepo.getFilmDetail(movieId) }
-        val filmEntities = LiveDataTestUtil.getValue(detailViewModel.getFilmDetail(movieId))
+        detailViewModel.setFilm(movieId)
+        val filmEntities = LiveDataTestUtil.getValue(detailViewModel.selectedFilm)
         val resources = Resource.success(data = films)
-        val data = filmEntities.data
+        val data = filmEntities.data as FilmDetailData
         assertNotNull(films)
+        assertNotNull(data)
+        assertEquals(data.originalTitle, films.originalTitle)
         println(filmEntities)
+        detailViewModel.selectedFilm.observeForever(observer)
         verify(observer).onChanged(resources)
 
     }
 
     @Test
-    fun getBTvDetail() {
+    fun getTvDetail() {
         val tvId = 85271
-        detailViewModel.getTvDetail(tvId).observeForever(observer2)
+
         val tvExpected = runBlocking { realRepo.getTvDetail(tvId) }
-        val tvEntities = LiveDataTestUtil.getValue(detailViewModel.getTvDetail(tvId))
+        detailViewModel.setTv(tvId)
+        val tvEntities = LiveDataTestUtil.getValue(detailViewModel.selectedTv)
         val resources = Resource.success(data = tvExpected)
-        val data = tvEntities.data
-        assertEquals(data?.originalName, tvExpected.originalName)
+        val data = tvEntities.data as TvDetailData
+        assertEquals(data.originalName, tvExpected.originalName)
         assertNotNull(tvEntities)
         println(tvEntities)
+        detailViewModel.selectedTv.observeForever(observer2)
         verify(observer2).onChanged(resources)
 
     }

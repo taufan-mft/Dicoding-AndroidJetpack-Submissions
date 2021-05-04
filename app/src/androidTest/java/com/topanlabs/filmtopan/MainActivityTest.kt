@@ -98,12 +98,10 @@ class MainActivityTest : KoinTest {
         onView(withId(R.id.tvYear)).check(
             matches(
                 withText(
-                    "${
-                        films.results[0].releaseDate.substring(
-                            0,
-                            4
-                        )
-                    }"
+                    films.results[0].releaseDate.substring(
+                        0,
+                        4
+                    )
                 )
             )
         )
@@ -171,12 +169,10 @@ class MainActivityTest : KoinTest {
         onView(withId(R.id.tvYear)).check(
             matches(
                 withText(
-                    "${
-                        tvs.results[0].firstAirDate.substring(
-                            0,
-                            4
-                        )
-                    }"
+                    tvs.results[0].firstAirDate.substring(
+                        0,
+                        4
+                    )
                 )
             )
         )
@@ -220,7 +216,7 @@ class MainActivityTest : KoinTest {
 
     private fun determineTvRating(): String {
         val response = ratingTv
-        var rating = response.results[0].rating
+        val rating = response.results[0].rating
         println(rating)
         return rating
     }

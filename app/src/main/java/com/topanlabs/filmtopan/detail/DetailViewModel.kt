@@ -66,19 +66,8 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
         }
     }
 
-    fun getTvDetail(tvID: Int) = liveData(Dispatchers.IO) {
-        espresso.increment()
-        try {
-            emit(Resource.success(data = repository.getTvDetail(tvID)))
-        } catch (exception: Exception) {
-            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
-        }
-
-        espresso.decrement()
-
-    }
-
     suspend fun getFilmRating(movieID: Int): String {
+        espresso.increment()
         lateinit var response: RatingFilmData
         var rating = "N/A"
         try {
@@ -90,10 +79,12 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
             }
         } catch (exception: Exception) {
         }
+        espresso.decrement()
         return rating
     }
 
     suspend fun getTvRating(tvID: Int): String {
+        espresso.increment()
         lateinit var response: RatingData
         var rating = "N/A"
         try {
@@ -101,6 +92,8 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
             rating = response.results[0].rating
         } catch (exception: Exception) {
         }
+        espresso.decrement()
         return rating
+
     }
 }

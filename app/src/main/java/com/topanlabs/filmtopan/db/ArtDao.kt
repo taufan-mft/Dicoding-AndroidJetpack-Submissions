@@ -1,7 +1,7 @@
 package com.topanlabs.filmtopan.db
 
+import androidx.paging.DataSource
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by taufan-mft on 5/8/2021.
@@ -13,7 +13,7 @@ interface ArtDao {
     }
 
     @Query("SELECT * FROM $TABLE_NAME WHERE type =:type")
-    fun getFavoriteList(type: String): Flow<List<ArtEntity>>
+    fun getFavoriteList(type: String): DataSource.Factory<Int, ArtEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(artEntity: ArtEntity)

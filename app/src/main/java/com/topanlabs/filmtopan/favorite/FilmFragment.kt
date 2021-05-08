@@ -42,6 +42,11 @@ class FilmFragment : Fragment() {
         viewModel.allLikedArts("film").observe(viewLifecycleOwner) { arts ->
             arts.let { adapterFavorite.setData(arts) }
             binding.progressBar.visibility = View.GONE
+            if (arts.loadedCount == 0) {
+                binding.recView.visibility = View.GONE
+            } else {
+                binding.recView.visibility = View.VISIBLE
+            }
         }
     }
 

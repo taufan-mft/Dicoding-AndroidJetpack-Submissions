@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.TmHead
 import com.topanlabs.filmtopan.data.TmTvHead
-import com.topanlabs.filmtopan.di.Koin
 import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import com.topanlabs.filmtopan.utils.LiveDataTestUtil
 import com.topanlabs.filmtopan.utils.Resource
@@ -22,25 +21,22 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
-import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.junit.MockitoJUnitRunner
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [29])
 class ListViewModelTest : KoinTest {
     val repoReal by inject<DataRepository>()
     val dispatcher = TestCoroutineDispatcher()
 
-    @get:Rule
-    val koinTestRule = KoinTestRule.create {
-        printLogger()
-        modules(Koin.appModule)
-    }
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -66,6 +62,7 @@ class ListViewModelTest : KoinTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        stopKoin()
     }
 
     @Test

@@ -1,8 +1,11 @@
 package com.topanlabs.filmtopan.favorite
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.topanlabs.filmtopan.databinding.ItemRowFilm2Binding
@@ -12,8 +15,24 @@ import com.topanlabs.filmtopan.detail.DetailActivity
 /**
  * Created by taufan-mft on 5/8/2021.
  */
-class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
+class FavoriteAdapter : PagedListAdapter<ArtEntity, FavoriteAdapter.FavoriteViewHolder>(
+    DIFF_CALLBACK
+) {
     private val list = ArrayList<ArtEntity>()
+
+    companion object {
+        private val DIFF_CALLBACK: DiffUtil.ItemCallback<ArtEntity> =
+            object : DiffUtil.ItemCallback<ArtEntity>() {
+                override fun areItemsTheSame(oldArt: ArtEntity, newArt: ArtEntity): Boolean {
+                    return oldArt.id == newArt.id
+                }
+
+                @SuppressLint("DiffUtilEquals")
+                override fun areContentsTheSame(oldArt: ArtEntity, newArt: ArtEntity): Boolean {
+                    return oldArt == newArt
+                }
+            }
+    }
 
     fun setData(list: List<ArtEntity>) {
         this.list.clear()
@@ -47,13 +66,13 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): FavoriteAdapter.FavoriteViewHolder {
+    ): FavoriteViewHolder {
         val binding =
             ItemRowFilm2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FavoriteAdapter.FavoriteViewHolder(binding)
+        return FavoriteViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: FavoriteAdapter.FavoriteViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
         val art = list[position]
         holder.bind(art)
     }

@@ -2,6 +2,7 @@ package com.topanlabs.filmtopan
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -12,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.topanlabs.filmtopan.data.*
 import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.Matchers.not
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,6 +48,172 @@ class MainActivityTest : KoinTest {
 
         }
         IdlingRegistry.getInstance().register(idlingResource.idlingResource)
+    }
+
+    @Test
+    fun loadAndDeleteFavorites() {
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+        onView(withId(R.id.floatingActionButton)).perform(click()) //tambah ke favorit
+        pressBack()
+        onView(withId(R.id.fav)).perform(click()) //klik menu fav
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        ) //klik entry pertama
+        onView(withId(R.id.tvTitle)).check(matches(withText(films.results[0].originalTitle)))
+        var builder = StringBuilder()
+        val iterator = detailFilm.genres.iterator()
+        while (iterator.hasNext()) {
+            val obj = iterator.next()
+            if (iterator.hasNext()) {
+                builder.append(obj.name)
+                builder.append(", ")
+            } else {
+                builder.append(obj.name)
+            }
+        }
+        onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvTitle)).check(matches(withText(films.results[0].originalTitle)))
+        onView(withId(R.id.tvOverview)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvOverview)).check(matches(withText(films.results[0].overview)))
+        onView(withId(R.id.imageView2)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvYear)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvYear)).check(
+            matches(
+                withText(
+                    films.results[0].releaseDate.substring(
+                        0,
+                        4
+                    )
+                )
+            )
+        )
+        onView(withId(R.id.tvTags)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvTags)).check(matches(withText(builder.toString())))
+        onView(withId(R.id.tvLang)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvLang)).check(matches(withText(determineLang(detailFilm.originalLanguage))))
+        onView(withId(R.id.tvStatus)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvStatus)).check(matches(withText(detailFilm.status)))
+        onView(withId(R.id.tvAge)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvAge)).check(matches(withText(determineFilmRating())))
+        onView(withId(R.id.tvScore)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvScore)).check(
+            matches(
+                withText(
+                    "${
+                        (detailFilm.voteAverage * 10).toString().substring(0, 2)
+                    }%"
+                )
+            )
+        )
+        onView(withId(R.id.lang)).check(matches(isDisplayed()))
+        onView(withId(R.id.stat)).check(matches(isDisplayed()))
+        onView(withId(R.id.score)).check(matches(isDisplayed()))
+        onView(withId(R.id.oView)).check(matches(isDisplayed()))
+        pressBack()
+        pressBack() //kembali ke main act
+        onView(withText("TV")).perform(click())
+        onView(withId(R.id.recView)).check(matches(isDisplayed()))
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        ) //klik tv pertama
+        onView(withId(R.id.floatingActionButton)).perform(click()) //tambah ke favorit
+        pressBack() //kembali ke main act
+        onView(withId(R.id.fav)).perform(click())
+        onView(withText("TV")).perform(click())
+        onView(withId(R.id.recView)).check(matches(isDisplayed()))
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+        builder = StringBuilder()
+        val iterator2 = detailTv.genres.iterator()
+        while (iterator2.hasNext()) {
+            val obj = iterator2.next()
+            if (iterator2.hasNext()) {
+                builder.append(obj.name)
+                builder.append(", ")
+            } else {
+                builder.append(obj.name)
+            }
+        }
+        onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvTitle)).check(matches(withText(tvs.results[0].originalName)))
+        onView(withId(R.id.tvOverview)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvOverview)).check(matches(withText(tvs.results[0].overview)))
+        onView(withId(R.id.imageView2)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvYear)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvYear)).check(
+            matches(
+                withText(
+                    tvs.results[0].firstAirDate.substring(
+                        0,
+                        4
+                    )
+                )
+            )
+        )
+        onView(withId(R.id.tvTags)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvTags)).check(matches(withText(builder.toString())))
+        onView(withId(R.id.tvLang)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvLang)).check(matches(withText(determineLang(detailTv.originalLanguage))))
+        onView(withId(R.id.tvStatus)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvStatus)).check(matches(withText(detailTv.status)))
+        onView(withId(R.id.tvAge)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvAge)).check(matches(withText(determineTvRating())))
+        onView(withId(R.id.tvScore)).check(matches(isDisplayed()))
+        onView(withId(R.id.tvScore)).check(
+            matches(
+                withText(
+                    "${
+                        (detailTv.voteAverage * 10).toString().substring(0, 2)
+                    }%"
+                )
+            )
+        )
+        onView(withId(R.id.lang)).check(matches(isDisplayed()))
+        onView(withId(R.id.stat)).check(matches(isDisplayed()))
+        onView(withId(R.id.score)).check(matches(isDisplayed()))
+        onView(withId(R.id.oView)).check(matches(isDisplayed()))
+        pressBack()
+        pressBack()
+        //hapus movie dr favorit
+        onView(withText("MOVIES")).perform(click())
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+        onView(withId(R.id.floatingActionButton)).perform(click()) //hapus dr favorit
+        pressBack()
+        //pindah ke tv
+        onView(withText("TV")).perform(click())
+        onView(withId(R.id.recView)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                0,
+                click()
+            )
+        )
+        onView(withId(R.id.floatingActionButton)).perform(click()) //hapus dr favorit
+        pressBack()
+
+        onView(withId(R.id.fav)).perform(click())
+        onView(withId(R.id.recView)).check(matches(not(isDisplayed())))
+        onView(withText("TV")).perform(click())
+        onView(withId(R.id.recView)).check(matches(not(isDisplayed())))
     }
 
     @Test

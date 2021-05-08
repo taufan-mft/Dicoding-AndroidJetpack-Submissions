@@ -2,11 +2,13 @@ package com.topanlabs.filmtopan.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import androidx.paging.DataSource
 import com.nhaarman.mockitokotlin2.verify
 import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.FilmDetailData
 import com.topanlabs.filmtopan.data.TvDetailData
-import com.topanlabs.filmtopan.di.Koin
+import com.topanlabs.filmtopan.db.ArtDao
+import com.topanlabs.filmtopan.db.ArtEntity
 import com.topanlabs.filmtopan.utils.EspressoIdlingResource
 import com.topanlabs.filmtopan.utils.LiveDataTestUtil
 import com.topanlabs.filmtopan.utils.Resource
@@ -21,36 +23,41 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
+import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
-import org.koin.test.KoinTestRule
-import org.koin.test.inject
+import org.koin.test.get
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [29])
 @ExperimentalCoroutinesApi
 class DetailViewModelTest : KoinTest {
 
     private val dispatcher = TestCoroutineDispatcher()
-    private val realRepo by inject<DataRepository>()
-    private lateinit var detailViewModel: DetailViewModel
+    private lateinit var realRepo: DataRepository
 
-    @get:Rule
-    val koinTestRule = KoinTestRule.create {
-        printLogger()
-        modules(Koin.appModule)
-    }
+    //private  val detailViewModel by inject<DetailViewModel>()
+    private lateinit var detailViewModel: DetailViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
+        MockitoAnnotations.initMocks(this)
+
+        realRepo = DataRepository(get(), dao)
         detailViewModel = DetailViewModel(realRepo, espressoIdlingResource)
+
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        stopKoin()
     }
 
     @get:Rule
@@ -65,8 +72,19 @@ class DetailViewModelTest : KoinTest {
     @Mock
     private lateinit var espressoIdlingResource: EspressoIdlingResource
 
-    @Test
+    private val dao = Mockito.mock(ArtDao::class.java)
 
+    @Test
+    fun allLikedArts() {
+        val dataSourceFactory =
+            Mockito.mock(DataSource.Factory::class.java) as DataSource.Factory<Int, ArtEntity>
+        Mockito.`when`(dao.getFavoriteList("tv")).thenReturn(dataSourceFactory)
+        detailViewModel.allLikedArts("tv")
+        verify(dao).getFavoriteList("tv")
+
+    }
+
+    @Test
     fun getFilmDetail() {
         val movieId = 567189
 

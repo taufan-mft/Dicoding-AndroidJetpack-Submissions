@@ -1,6 +1,10 @@
 package com.topanlabs.filmtopan.detail
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagedList
 import com.topanlabs.filmtopan.data.DataRepository
 import com.topanlabs.filmtopan.data.RatingData
 import com.topanlabs.filmtopan.data.RatingFilmData
@@ -15,8 +19,7 @@ import kotlinx.coroutines.launch
 class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdlingResource) : ViewModel() {
     val selectedFilm = MutableLiveData<Resource<Any>>()
     val selectedTv = MutableLiveData<Resource<Any>>()
-    fun allLikedArts(type: String): LiveData<List<ArtEntity>> =
-        repository.allLikedArts(type).asLiveData()
+    fun allLikedArts(type: String): LiveData<PagedList<ArtEntity>> = repository.allLikedArts(type)
 
     suspend fun isLiked(id: Int): Boolean {
         val count: Int = repository.searchArt(id)
@@ -91,14 +94,18 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
     }
 
     fun insert(artEntity: ArtEntity) {
+        espresso.increment()
         viewModelScope.launch {
             repository.insert(artEntity)
+            espresso.decrement()
         }
     }
 
     fun delete(artEntity: ArtEntity) {
+        espresso.increment()
         viewModelScope.launch {
             repository.delete(artEntity)
+            espresso.decrement()
         }
     }
 }

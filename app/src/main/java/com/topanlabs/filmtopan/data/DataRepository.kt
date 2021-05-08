@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Created by taufan-mft on 5/1/2021.
  */
-class DataRepository(val tmApi: TmApi, val artDao: ArtDao) {
+class DataRepository(private val tmApi: TmApi, private val artDao: ArtDao) {
     suspend fun getFilms() = tmApi.getMovies()
     suspend fun getTvs() = tmApi.getTvs()
     suspend fun getFilmDetail(movieID: Int) = tmApi.getFilmDetail(movieID)
@@ -28,5 +28,11 @@ class DataRepository(val tmApi: TmApi, val artDao: ArtDao) {
     @WorkerThread
     suspend fun delete(artEntity: ArtEntity) {
         artDao.delete(artEntity)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun searchArt(id: Int): Int {
+        return artDao.searchArt(id)
     }
 }

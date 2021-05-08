@@ -6,21 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.topanlabs.filmtopan.databinding.FragmentFilm2Binding
+import com.topanlabs.filmtopan.databinding.FragmentTv2Binding
 import com.topanlabs.filmtopan.detail.DetailViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-
-class FilmFragment : Fragment() {
-    private lateinit var binding: FragmentFilm2Binding
+class TvFragment : Fragment() {
+    private lateinit var binding: FragmentTv2Binding
     val viewModel: DetailViewModel by sharedViewModel()
     val adapterFavorite = FavoriteAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentFilm2Binding.inflate(inflater, container, false)
+        binding = FragmentTv2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,7 +39,7 @@ class FilmFragment : Fragment() {
     }
 
     private fun loadData() {
-        viewModel.allLikedArts("film").observe(viewLifecycleOwner) { arts ->
+        viewModel.allLikedArts("tv").observe(viewLifecycleOwner) { arts ->
             arts.let { adapterFavorite.setData(arts) }
             binding.progressBar.visibility = View.GONE
         }

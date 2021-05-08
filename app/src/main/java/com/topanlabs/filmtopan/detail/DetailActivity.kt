@@ -1,6 +1,7 @@
 package com.topanlabs.filmtopan.detail
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -50,6 +51,24 @@ class DetailActivity : AppCompatActivity() {
                         when (resource.status) {
                             Status.SUCCESS -> {
                                 val data = resource.data as FilmDetailData
+                                binding.floatingActionButton.setOnClickListener {
+                                    val artEntity = ArtEntity(
+                                        id = data.id,
+                                        title = data.originalTitle,
+                                        photo = "https://image.tmdb.org/t/p/original/${data.posterPath}",
+                                        type = typeS,
+                                        year = data.releaseDate.substring(0, 4)
+                                    )
+                                    if (!isLiked) {
+                                        viewModel.insert(artEntity)
+                                        isLiked = true
+                                        binding.floatingActionButton.setColorFilter(Color.WHITE)
+                                    } else {
+                                        viewModel.delete(artEntity)
+                                        isLiked = false
+                                        binding.floatingActionButton.setColorFilter(Color.BLACK)
+                                    }
+                                }
                                 binding.tvTitle.text = data.originalTitle
                                 Glide.with(applicationContext)
                                     .load("https://image.tmdb.org/t/p/original/${data.posterPath}")
@@ -84,7 +103,12 @@ class DetailActivity : AppCompatActivity() {
                                 lifecycleScope.launch(Dispatchers.Main) {
                                     val rating = viewModel.getFilmRating(data.id)
                                     binding.tvAge.text = rating
+                                    isLiked = viewModel.isLiked(data.id)
+                                    if (isLiked) {
+                                        binding.floatingActionButton.setColorFilter(Color.WHITE)
+                                    }
                                     binding.progressBar.visibility = View.GONE
+
                                     changeVisibility(View.VISIBLE)
                                 }
 
@@ -117,7 +141,15 @@ class DetailActivity : AppCompatActivity() {
                                         type = typeS,
                                         year = data.firstAirDate.substring(0, 4)
                                     )
-                                    viewModel.insert(artEntity)
+                                    if (!isLiked) {
+                                        viewModel.insert(artEntity)
+                                        isLiked = true
+                                        binding.floatingActionButton.setColorFilter(Color.WHITE)
+                                    } else {
+                                        viewModel.delete(artEntity)
+                                        isLiked = false
+                                        binding.floatingActionButton.setColorFilter(Color.BLACK)
+                                    }
                                 }
                                 binding.tvTitle.text = data.originalName
                                 Glide
@@ -156,6 +188,10 @@ class DetailActivity : AppCompatActivity() {
                                     val rating = viewModel.getTvRating(data.id)
                                     binding.tvAge.text = rating
                                     binding.progressBar.visibility = View.GONE
+                                    isLiked = viewModel.isLiked(data.id)
+                                    if (isLiked) {
+                                        binding.floatingActionButton.setColorFilter(Color.WHITE)
+                                    }
                                     changeVisibility(View.VISIBLE)
                                 }
                             }

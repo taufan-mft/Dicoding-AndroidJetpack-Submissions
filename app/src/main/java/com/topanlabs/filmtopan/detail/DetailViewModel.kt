@@ -18,6 +18,11 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
     fun allLikedArts(type: String): LiveData<List<ArtEntity>> =
         repository.allLikedArts(type).asLiveData()
 
+    suspend fun isLiked(id: Int): Boolean {
+        val count: Int = repository.searchArt(id)
+        return count > 0
+    }
+
     fun setFilm(movieID: Int) {
         espresso.increment()
         viewModelScope.launch {
@@ -88,6 +93,12 @@ class DetailViewModel(val repository: DataRepository, val espresso: EspressoIdli
     fun insert(artEntity: ArtEntity) {
         viewModelScope.launch {
             repository.insert(artEntity)
+        }
+    }
+
+    fun delete(artEntity: ArtEntity) {
+        viewModelScope.launch {
+            repository.delete(artEntity)
         }
     }
 }

@@ -20,4 +20,7 @@ interface ArtDao {
 
     @Delete
     suspend fun delete(artEntity: ArtEntity)
+
+    @Query("SELECT COUNT(id) FROM $TABLE_NAME WHERE id =:id")
+    suspend fun searchArt(id: Int): Int
 }

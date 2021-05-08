@@ -16,7 +16,7 @@ class SectionsAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activi
         var fragment: Fragment? = null
         when (position) {
             0 -> fragment = FilmFragment()
-            1 -> fragment = FilmFragment()
+            1 -> fragment = TvFragment()
         }
         return fragment as Fragment
     }

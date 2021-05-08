@@ -1,23 +1,101 @@
 package com.topanlabs.filmtopan.data
 
-import com.topanlabs.filmtopan.di.Koin.appModule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.asLiveData
+import com.topanlabs.filmtopan.db.ArtDao
+import com.topanlabs.filmtopan.db.ArtEntity
+import com.topanlabs.filmtopan.db.ArtRoomDatabase
+import com.topanlabs.filmtopan.network.RetroBuilder
+import com.topanlabs.filmtopan.utils.LiveDataTestUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.inject
+import org.junit.runner.RunWith
+import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
+import org.koin.test.get
+import org.koin.test.mock.MockProviderRule
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
+
+@RunWith(MockitoJUnitRunner::class)
 
 class DataRepositoryTest : KoinTest {
-    val repository by inject<DataRepository>()
+    private lateinit var repository: DataRepository
+    private val dispatcher = TestCoroutineDispatcher()
+
+    @Mock
+    lateinit var mockedDao: ArtRoomDatabase
+
+    @Mock
+    lateinit var artDao: ArtDao
+
+    var mockedModule = module {
+        single { RetroBuilder }
+    }
+
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
         printLogger()
-        modules(appModule)
+        modules(mockedModule)
     }
+
+    @get:Rule
+    val mockProvider = MockProviderRule.create { clazz ->
+        Mockito.mock(clazz.java)
+    }
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(dispatcher)
+        MockitoAnnotations.initMocks(this)
+        `when`(mockedDao.artDao()).thenReturn(artDao)
+        repository = DataRepository(get<RetroBuilder>().tmApi, mockedDao.artDao())
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun testLive() {
+        val data: Flow<List<ArtEntity>> = flow {
+            val list = listOf(
+                ArtEntity(
+                    id = 88,
+                    title = "raisa",
+                    photo = "photo",
+                    type = "tv",
+                    year = "2020"
+                )
+            )
+            emit(list)
+        }
+        `when`(artDao.getFavoriteList("tvs")).thenReturn(data)
+        val dataRepo: Flow<List<ArtEntity>> = repository.allLikedArts("tvs")
+        assertNotNull(dataRepo)
+        val dataLive = LiveDataTestUtil.getValue(dataRepo.asLiveData())
+        assertEquals(dataLive[0].title, "raisa")
+    }
+
 
     @Test
     fun getFilms() {
@@ -88,4 +166,5 @@ class DataRepositoryTest : KoinTest {
             assertEquals(rating.id, data.id)
         }
     }
+
 }

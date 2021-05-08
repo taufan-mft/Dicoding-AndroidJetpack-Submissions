@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.topanlabs.filmtopan.data.FilmDetailData
 import com.topanlabs.filmtopan.data.TvDetailData
 import com.topanlabs.filmtopan.databinding.ActivityDetailBinding
+import com.topanlabs.filmtopan.db.ArtEntity
 import com.topanlabs.filmtopan.utils.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +27,9 @@ class DetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailBinding
     val viewModel: DetailViewModel by viewModel()
+    private lateinit var typeS: String
+    private var isLiked = false
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
         val type = intent.getStringExtra(TYPE_TAG)
         if (type == ID_FILM) {
+            typeS = "film"
             changeVisibility(View.GONE)
             supportActionBar?.title = "Detail Film"
             intent.getIntExtra(ID_TAG, 0).let {
@@ -93,6 +98,7 @@ class DetailActivity : AppCompatActivity() {
                 })
             }
         } else {
+            typeS = "tv"
             supportActionBar?.title = "Detail TV Show"
             intent.getIntExtra(ID_TAG, 0).let {
                 changeVisibility(View.GONE)
@@ -101,7 +107,18 @@ class DetailActivity : AppCompatActivity() {
                     it?.let { resource ->
                         when (resource.status) {
                             Status.SUCCESS -> {
+
                                 val data = resource.data as TvDetailData
+                                binding.floatingActionButton.setOnClickListener {
+                                    val artEntity = ArtEntity(
+                                        id = data.id,
+                                        title = data.originalName,
+                                        photo = "https://image.tmdb.org/t/p/original/${data.posterPath}",
+                                        type = typeS,
+                                        year = data.firstAirDate.substring(0, 4)
+                                    )
+                                    viewModel.insert(artEntity)
+                                }
                                 binding.tvTitle.text = data.originalName
                                 Glide
                                     .with(applicationContext)
@@ -151,12 +168,14 @@ class DetailActivity : AppCompatActivity() {
                 })
             }
         }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }
+
 
     private fun changeVisibility(visible: Int) {
         binding.tvYear.visibility = visible

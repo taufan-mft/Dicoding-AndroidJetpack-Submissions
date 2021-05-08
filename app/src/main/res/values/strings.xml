@@ -13,4 +13,6 @@
     <string name="overview">Overview</string>
     <string name="_2018">2018</string>
     <string name="poster">Poster</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

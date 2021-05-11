@@ -85,6 +85,37 @@ class DetailViewModelTest : KoinTest {
     }
 
     @Test
+    fun testInsert() {
+        val artEntity =
+            ArtEntity(id = 1, title = "raisa", photo = "tasya", type = "tv", year = "2020")
+
+        detailViewModel.insert(artEntity)
+        runBlocking { verify(dao).insert(artEntity) }
+
+    }
+
+
+    @Test
+    fun testDelete() {
+        val artEntity =
+            ArtEntity(id = 1, title = "raisa", photo = "tasya", type = "tv", year = "2020")
+
+        detailViewModel.delete(artEntity)
+        runBlocking { verify(dao).delete(artEntity) }
+
+    }
+
+    @Test
+    fun testIsLiked() {
+        val id = 1
+        runBlocking {
+            Mockito.`when`(dao.searchArt(id)).thenReturn(1)
+            detailViewModel.isLiked(id)
+            verify(dao).searchArt(1)
+        }
+    }
+
+    @Test
     fun getFilmDetail() {
         val movieId = 567189
 

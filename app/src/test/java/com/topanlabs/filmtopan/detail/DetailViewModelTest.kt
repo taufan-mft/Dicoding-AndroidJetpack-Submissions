@@ -40,6 +40,7 @@ class DetailViewModelTest : KoinTest {
 
     private val dispatcher = TestCoroutineDispatcher()
     private lateinit var realRepo: DataRepository
+    private lateinit var spyedRepo: DataRepository
 
     //private  val detailViewModel by inject<DetailViewModel>()
     private lateinit var detailViewModel: DetailViewModel
@@ -50,7 +51,8 @@ class DetailViewModelTest : KoinTest {
         MockitoAnnotations.initMocks(this)
 
         realRepo = DataRepository(get(), dao)
-        detailViewModel = DetailViewModel(realRepo, espressoIdlingResource)
+        spyedRepo = Mockito.spy(realRepo)
+        detailViewModel = DetailViewModel(spyedRepo, espressoIdlingResource)
 
     }
 
@@ -90,7 +92,7 @@ class DetailViewModelTest : KoinTest {
             ArtEntity(id = 1, title = "raisa", photo = "tasya", type = "tv", year = "2020")
 
         detailViewModel.insert(artEntity)
-        runBlocking { verify(dao).insert(artEntity) }
+        runBlocking { verify(spyedRepo).insert(artEntity) }
 
     }
 
@@ -101,7 +103,7 @@ class DetailViewModelTest : KoinTest {
             ArtEntity(id = 1, title = "raisa", photo = "tasya", type = "tv", year = "2020")
 
         detailViewModel.delete(artEntity)
-        runBlocking { verify(dao).delete(artEntity) }
+        runBlocking { verify(spyedRepo).delete(artEntity) }
 
     }
 
@@ -111,7 +113,7 @@ class DetailViewModelTest : KoinTest {
         runBlocking {
             Mockito.`when`(dao.searchArt(id)).thenReturn(1)
             detailViewModel.isLiked(id)
-            verify(dao).searchArt(1)
+            verify(spyedRepo).searchArt(1)
         }
     }
 
